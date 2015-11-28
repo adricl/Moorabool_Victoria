@@ -35,8 +35,10 @@
 
   my $html_raw = $mech->content( raw => 1 );
   my $tree = HTML::TreeBuilder->new_from_content($html_raw);
-  my @table = $tree->findnodes('//table[@id="_ctl0_tblSearchResults"]/tbody');
-  my @table_data = $table[0]->content_list();
+  my $table = $tree->find_by_attribute('id', '_ctl0_tblSearchResults');
+  my $table_body = $table->look_down(_tag => 'tbody');
+
+  my @table_data = $table_body->content_list();
 
   for(my $i = 0; $i < scalar @table_data; $i++)
   {
