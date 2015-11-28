@@ -17,4 +17,6 @@ requires "HTTP::Cookies", "6.01";
 requires "WWW::Mechanize::PhantomJS", "0.11";
 
 requires "Database::DumpTruck", "1.2";
+require "DateTime::Format::ISO8601", "0.08";
+
 

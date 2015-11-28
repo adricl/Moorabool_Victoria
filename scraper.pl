@@ -7,6 +7,7 @@
  use LWP::UserAgent;
  use HTTP::Request::Common;
  use HTTP::Cookies;
+ use DateTime::Format::ISO8601;
 
   my $base_url = 'https://greenlight.e-vis.com.au/moorabool/public/';
   my $search_url = 'main.aspx?frm=uc_search_AdvertisingApplications.ascx&appTypeId=1&mId=232';
@@ -38,6 +39,7 @@
 
   for(my $i = 0; $i < scalar @table_data; $i++)
   {
+	  print "Processing: " . ($i + 1) . " out of " . scalar @table_data . "\n";
 	  $curr_row = $table_data[$i];
 	  my $tableId = $curr_row->look_down( _tag  => 'tr', class => 'tableHead' );
 	  if(!($tableId ne undef))
@@ -48,14 +50,29 @@
 		
 		if(!id_found($id, $dt))
 		{
-			
+			get_data_page($mech, $addr, $dt);
 		}
 	  }
   }
 
   sub get_data_page 
   {
-	my ($mech, $address, $dt) = @_;
+	my ($mech, $web_address, $dt) = @_;
+	$mech->get($web_address);
+	my $html_raw = $mech->content( raw => 1 );
+	my $tree = HTML::TreeBuilder->new_from_content($html_raw);
+	#print $tree->find_by_attribute('id', '_ctl0_lblApplicationNo')->as_text . "\n";
+	$dt->insert({
+    	council_reference => $tree->find_by_attribute('id', '_ctl0_lblApplicationNo')->as_text,
+     	address => $tree->find_by_attribute('id', '_ctl0_lblAddress')->as_text,
+		description => $tree->find_by_attribute('id', '_ctl0_lblApplicationDescription')->as_text,
+		info_url => $web_address,
+		comment_url => $web_address,
+		date_scraped => DateTime->now()->iso8601().'Z',
+		date_received => '',
+		on_notice_from => '',
+		on_notice_to => ''
+	});
   }
   
   sub id_found
@@ -72,16 +89,4 @@
 	   return 1;
   }
   
-  #print Dumper @table_data;
-  #close FH;
-  #print Dumper $table;
-
-  #next page
-  #$mech->click_button( id => '_ctl0_ucPageControl_imgPageForward');
-  #print $mech->content( raw => 1 );
-  #print $mech->text();
-  #my $png= $mech->content_as_png();
-  # print $_->{message}
-  #    for $mech->js_errors();
-  #print $mech->base;
 
