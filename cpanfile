@@ -8,7 +8,7 @@ requires "LWP::UserAgent", "6.13";
 
 requires "HTML::Tree", "5.03";
 requires "HTML::TreeBuilder", "5.03";
-requires "HTML::TreeBuilder::XPath;", "0.14";
+#requires "HTML::TreeBuilder::XPath;", "0.14";
 
 requires "HTTP::Request", "6.11";
 requires "HTTP::Request::Common", "6.11";
