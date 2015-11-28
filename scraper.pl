@@ -31,11 +31,12 @@
 
 
   $mech->get($base_url . $search_url);
-  $mech->click_button( id => '_ctl0_btnSearch'); #Search Button
+  print $mech->content( raw => 1 );
+  $mech->click_button( id => '_ctl0_btnSearch'); #Search Button click to load new session
 
   my $html_raw = $mech->content( raw => 1 );
   my $tree = HTML::TreeBuilder->new_from_content($html_raw);
-  my $table = $tree->find_by_attribute('id', '_ctl0_tblSearchResults');
+  my $table = $tree->find_by_attribute('id', '_ctl0_tblSearchResults'); #find the table to read
   my $table_body = $table->look_down(_tag => 'tbody');
 
   my @table_data = $table_body->content_list();
@@ -47,7 +48,7 @@
 	  my $tableId = $curr_row->look_down( _tag  => 'tr', class => 'tableHead' );
 	  if(!($tableId ne undef))
 	  {
-		my @arr = $curr_row->look_down( _tag => 'a');
+		my @arr = $curr_row->look_down( _tag => 'a'); #parse the id to work out if we need to process it
 		my $addr = $base_url .  $arr[0]->attr('href');
 		my $id = ${$arr[0]->content_refs_list};
 		
@@ -58,6 +59,7 @@
 	  }
   }
 
+  #Load page into database 
   sub get_data_page 
   {
 	my ($mech, $web_address, $dt) = @_;
@@ -79,7 +81,8 @@
 		on_notice_to => ''
 	});
   }
-  
+ 
+  #check the database for id 
   sub id_found
   {
 	  my ($id, $dt) = @_;
