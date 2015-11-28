@@ -1,4 +1,5 @@
- use WWW::Mechanize::PhantomJS;
+
+ use POSIX;
  use HTML::TreeBuilder;
  use Database::DumpTruck;
  use Data::Dumper;
@@ -7,7 +8,7 @@
  use LWP::UserAgent;
  use HTTP::Request::Common;
  use HTTP::Cookies;
- use DateTime::Format::ISO8601;
+ use WWW::Mechanize::PhantomJS;
 
   my $base_url = 'https://greenlight.e-vis.com.au/moorabool/public/';
   my $search_url = 'main.aspx?frm=uc_search_AdvertisingApplications.ascx&appTypeId=1&mId=232';
@@ -61,14 +62,16 @@
 	$mech->get($web_address);
 	my $html_raw = $mech->content( raw => 1 );
 	my $tree = HTML::TreeBuilder->new_from_content($html_raw);
-	#print $tree->find_by_attribute('id', '_ctl0_lblApplicationNo')->as_text . "\n";
+	#print $tree->find_by_attribute('id', '_ctl0_lblApplicationNo')->as_text . "\n"
+	my $now = time();
+	my $iso_date = strftime('%Y-%m-%dT%H:%M:%SZ', gmtime($now)), "\n";
 	$dt->insert({
     	council_reference => $tree->find_by_attribute('id', '_ctl0_lblApplicationNo')->as_text,
      	address => $tree->find_by_attribute('id', '_ctl0_lblAddress')->as_text,
 		description => $tree->find_by_attribute('id', '_ctl0_lblApplicationDescription')->as_text,
 		info_url => $web_address,
 		comment_url => $web_address,
-		date_scraped => DateTime->now()->iso8601().'Z',
+		date_scraped => $iso_date,
 		date_received => '',
 		on_notice_from => '',
 		on_notice_to => ''
