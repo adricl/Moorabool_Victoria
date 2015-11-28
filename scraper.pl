@@ -11,6 +11,8 @@
  use HTTP::Cookies;
  use WWW::Mechanize;
  use WWW::Mechanize::PhantomJS;
+ use IO::Socket::SSL;
+ use Mozilla::CA;
 
   my $base_url = 'https://greenlight.e-vis.com.au/moorabool/public/';
   my $search_url = 'main.aspx?frm=uc_search_AdvertisingApplications.ascx&appTypeId=1&mId=232';

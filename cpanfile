@@ -18,5 +18,6 @@ requires "WWW::Mechanize", "1.75";
 requires "WWW::Mechanize::PhantomJS", "0.11";
 
 requires "Database::DumpTruck", "1.2";
-
+requires "IO::Socket::SSL", "2.020"; 
+requires "Mozilla::CA", "";
 
