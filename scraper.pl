@@ -1,36 +1,87 @@
-# This is a template for a Perl scraper on morph.io (https://morph.io)
-# including some code snippets below that you should find helpful
+ use WWW::Mechanize::PhantomJS;
+ use HTML::TreeBuilder;
+ use Database::DumpTruck;
+ use Data::Dumper;
+ use HTML::TreeBuilder::XPath;
+ use HTTP::Request;
+ use LWP::UserAgent;
+ use HTTP::Request::Common;
+ use HTTP::Cookies;
 
-# use LWP::Simple;
-# use HTML::TreeBuilder;
-# use Database::DumpTruck;
+  my $base_url = 'https://greenlight.e-vis.com.au/moorabool/public/';
+  my $search_url = 'main.aspx?frm=uc_search_AdvertisingApplications.ascx&appTypeId=1&mId=232';
+  #Db Handle
+  my $dt = Database::DumpTruck->new({dbname => 'data.sqlite', table => 'data'});
 
-# use strict;
-# use warnings;
+  my $mech = WWW::Mechanize::PhantomJS->new();
 
-# # Turn off output buffering
-# $| = 1;
-
-# # Read out and parse a web page
-# my $tb = HTML::TreeBuilder->new_from_content(get('http://example.com/'));
-
-# # Look for <tr>s of <table id="hello">
-# my @rows = $tb->look_down(
-#     _tag => 'tr',
-#     sub { shift->parent->attr('id') eq 'hello' }
-# );
-
-# # Open a database handle
-# my $dt = Database::DumpTruck->new({dbname => 'data.sqlite', table => 'data'});
-#
-# # Insert some records into the database
-# $dt->insert([{
-#     Name => 'Susan',
-#     Occupation => 'Software Developer'
+#$dt->insert([{
+#     council_reference => '',
+#     address => '',
+#	 description => '',
+#	 info_url => '',
+#	 comment_url => '',
+#	 date_scraped => '',
+#	 date_received => '',
+#	 on_notice_from => '',
+#	 on_notice_to => ''
 # }]);
 
-# You don't have to do things with the HTML::TreeBuilder and Database::DumpTruck libraries.
-# You can use whatever libraries you want: https://morph.io/documentation/perl
-# All that matters is that your final data is written to an SQLite database
-# called "data.sqlite" in the current working directory which has at least a table
-# called "data".
+
+  $mech->get($base_url . $search_url);
+  $mech->click_button( id => '_ctl0_btnSearch'); #Search Button
+
+  my $html_raw = $mech->content( raw => 1 );
+  my $tree = HTML::TreeBuilder->new_from_content($html_raw);
+  my @table = $tree->findnodes('//table[@id="_ctl0_tblSearchResults"]/tbody');
+  my @table_data = $table[0]->content_list();
+
+  for(my $i = 0; $i < scalar @table_data; $i++)
+  {
+	  $curr_row = $table_data[$i];
+	  my $tableId = $curr_row->look_down( _tag  => 'tr', class => 'tableHead' );
+	  if(!($tableId ne undef))
+	  {
+		my @arr = $curr_row->look_down( _tag => 'a');
+		my $addr = $base_url .  $arr[0]->attr('href');
+		my $id = ${$arr[0]->content_refs_list};
+		
+		if(!id_found($id, $dt))
+		{
+			
+		}
+	  }
+  }
+
+  sub get_data_page 
+  {
+	my ($mech, $address, $dt) = @_;
+  }
+  
+  sub id_found
+  {
+	  my ($id, $dt) = @_;
+
+	  my $ret_ar = eval {$dt->execute('select count(*) from data where council_reference = ?', $id ); };
+	  if ($EVAL_ERROR || ! @{$ret_ar} || ! exists $ret_ar->[0]->{'count(*)'}
+		|| ! defined $ret_ar->[0]->{'count(*)'}
+		|| $ret_ar->[0]->{'count(*)'} == 0) 
+	   {
+			return 0;
+	   }
+	   return 1;
+  }
+  
+  #print Dumper @table_data;
+  #close FH;
+  #print Dumper $table;
+
+  #next page
+  #$mech->click_button( id => '_ctl0_ucPageControl_imgPageForward');
+  #print $mech->content( raw => 1 );
+  #print $mech->text();
+  #my $png= $mech->content_as_png();
+  # print $_->{message}
+  #    for $mech->js_errors();
+  #print $mech->base;
+
