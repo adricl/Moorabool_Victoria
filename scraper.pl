@@ -5,6 +5,7 @@
  use Data::Dumper;
 # use HTML::TreeBuilder::XPath; #Removed Xpath as it does not work with Morph.io
  use HTTP::Request;
+ use LWP::Protocol::https;
  use LWP::UserAgent;
  use HTTP::Request::Common;
  use HTTP::Cookies;
