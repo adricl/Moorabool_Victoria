@@ -17,7 +17,7 @@
   #Db Handle
   my $dt = Database::DumpTruck->new({dbname => 'data.sqlite', table => 'data'});
 
-  my $mech = WWW::Mechanize::PhantomJS->new();
+  my $mech = WWW::Mechanize::PhantomJS->new(noproxy => 1);
 
 #$dt->insert([{
 #     council_reference => '',
