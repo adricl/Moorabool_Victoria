@@ -1,4 +1,9 @@
 
+BEGIN {
+	 $ENV{HTTPS_VERSION} = 3;
+}
+
+
  use POSIX;
  use HTML::TreeBuilder;
  use Database::DumpTruck;
@@ -13,6 +18,8 @@
  use WWW::Mechanize::PhantomJS;
  use IO::Socket::SSL;
  use Mozilla::CA;
+ use Crypt::SSLeay;
+
 
   my $base_url = 'https://greenlight.e-vis.com.au/moorabool/public/';
   my $search_url = 'main.aspx?frm=uc_search_AdvertisingApplications.ascx&appTypeId=1&mId=232';
@@ -20,7 +27,7 @@
   my $dt = Database::DumpTruck->new({dbname => 'data.sqlite', table => 'data'});
 
   my $mech = WWW::Mechanize::PhantomJS->new(noproxy => 1);
-
+  #$mech->ssl_opts( SSL_version => 'SSLv3');
 #$dt->insert([{
 #     council_reference => '',
 #     address => '',

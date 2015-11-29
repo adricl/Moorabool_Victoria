@@ -20,4 +20,4 @@ requires "WWW::Mechanize::PhantomJS", "0.11";
 requires "Database::DumpTruck", "1.2";
 requires "IO::Socket::SSL", "2.020"; 
 requires "Mozilla::CA", "";
-
+requires "Crypt::SSLeay", "0.72";
