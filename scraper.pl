@@ -40,6 +40,22 @@ BEGIN {
 #	 on_notice_to => ''
 # }]);
 
+
+      my $host = "greenlight.e-vis.com.au";
+    my $client = IO::Socket::SSL->new(
+        PeerHost => "$host:443",
+        SSL_verify_mode => 0x02,
+        SSL_ca_file => Mozilla::CA::SSL_ca_file(),
+    )
+        || die "Can't connect: $@";
+
+    $client->verify_hostname($host, "http")
+        || die "hostname verification failure";
+
+#
+#
+#
+
   my $ua = LWP::UserAgent->new;
   $ua->cookie_jar(HTTP::Cookies->new(file => "cookie_jar", autosave => 1));
   my $request = $ua->request(GET $base_url . $search_url);
