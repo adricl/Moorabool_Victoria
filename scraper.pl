@@ -52,7 +52,7 @@ BEGIN {
   my $ua = LWP::UserAgent->new;
   $ua->cookie_jar(HTTP::Cookies->new(file => "cookie_jar", autosave => 1));
   my $request = $ua->request(GET $base_url . $search_url);
-  print $request->content( raw => 1 ); 
+  #print $request->content( raw => 1 ); 
 
   $mech->get($base_url . $search_url);
   #print $mech->content( raw => 1 );
