@@ -55,7 +55,7 @@ BEGIN {
   #print $request->content( raw => 1 ); 
 
   $mech->get($base_url . $search_url);
-  #print $mech->content( raw => 1 );
+  print $mech->content( raw => 1 );
   $mech->click_button( id => '_ctl0_btnSearch'); #Search Button click to load new session
 
   my $html_raw = $mech->content( raw => 1 );
