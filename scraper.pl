@@ -19,7 +19,7 @@ BEGIN {
  use WWW::Mechanize::PhantomJS;
  use IO::Socket::SSL;
  use Mozilla::CA;
- use Crypt::SSLeay;
+ #use Crypt::SSLeay;
 
 
   my $base_url = 'https://greenlight.e-vis.com.au/moorabool/public/';
@@ -27,7 +27,9 @@ BEGIN {
   #Db Handle
   my $dt = Database::DumpTruck->new({dbname => 'data.sqlite', table => 'data'});
 
-  my $mech = WWW::Mechanize::PhantomJS->new(noproxy => 1);
+  my $mech = WWW::Mechanize::PhantomJS->new(ssl_opts => {
+    SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE,
+    verify_hostname => 0, });
   #$mech->ssl_opts( SSL_version => 'SSLv3');
 #$dt->insert([{
 #     council_reference => '',
@@ -42,16 +44,6 @@ BEGIN {
 # }]);
 
 
-      my $host = "greenlight.e-vis.com.au";
-    my $client = IO::Socket::SSL->new(
-        PeerHost => "$host:443",
-        SSL_verify_mode => 0x02,
-        SSL_ca_file => Mozilla::CA::SSL_ca_file(),
-    )
-        || die "Can't connect: $@";
-
-    $client->verify_hostname($host, "http")
-        || die "hostname verification failure";
 
 #
 #
