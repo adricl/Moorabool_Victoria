@@ -30,6 +30,8 @@ BEGIN {
   my $mech = WWW::Mechanize::PhantomJS->new(ssl_opts => {
     SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE,
     verify_hostname => 0, });
+    $mech->cookie_jar(HTTP::Cookies->new);
+
   #$mech->ssl_opts( SSL_version => 'SSLv3');
 #$dt->insert([{
 #     council_reference => '',
